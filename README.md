@@ -8,11 +8,18 @@ WiremockClient is an HTTP client that allows users to interact with a standalone
 
 ## Installation
 
-WiremockClient is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+WiremockClient is available through [CocoaPods](http://cocoapods.org) and [Swift Package Manager](https://swift.org/package-manager/).
+
+To install with CocoaPods, simply add the following line to your Podfile:
 
 ```ruby
 pod "WiremockClient"
+```
+
+To install with SwiftPM, add the following line to the `dependencies` section of your Package.swift:
+
+```swift
+.package(url: "https://github.com/mobileforming/WiremockClient", .upToNextMajor(from: Version(major: 2, minor: 2, patch: 0)))
 ```
 
 ## Usage
@@ -72,6 +79,16 @@ WiremockClient.postMapping(stubMapping:
 )
 ```
 
+WiremockClient also includes a convenience method for stubbing request JSON that is stored in a local file:
+
+```swift
+WiremockClient.postMapping(stubMapping:
+    StubMapping.stubFor(requestMethod: .ANY, urlMatchCondition: .urlEqualTo, url: "http://localhost:8080/my/path")
+        .withRequestBodyFromLocalJsonFile(fileName: "myFile", in: Bundle(for: type(of: self)))
+        .willReturn(ResponseDefinition())
+)
+```
+
 Mappings can also be prioritized as described in the ‘Stub priority’ section of the [Stubbing](http://wiremock.org/docs/stubbing/) documentation:
 
 ```swift
@@ -108,12 +125,10 @@ WiremockClient.postMapping(stubMapping:
     StubMapping.stubFor(requestMethod: .ANY, urlMatchCondition: .urlEqualTo, url: "http://localhost:8080/my/path")
         .willReturn(
             ResponseDefinition()
-                .withLocalJsonBodyFile(fileName: "myFile", fileBundleId: "com.WiremockClient", fileSubdirectory: nil)
+                .withLocalJsonBodyFile(fileName: "myFile", in: Bundle(for: type(of: self)))
     )
 )
 ```
-
-A public `json` variable is also included as part of the ResponseDefinition object to allow for easy access to locally stored JSON, e.g. for injecting in unit tests.
 
 ### Proxying
 
@@ -219,7 +234,7 @@ A typical use case of WiremockClient looks like this:
 
 ## Author
 
-Ted Rothrock, ted.rothrock@mobileforming.com
+Ted Rothrock, theodore.rothrock@gmail.com
 
 ## License
 
